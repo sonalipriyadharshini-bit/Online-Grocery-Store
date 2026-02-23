@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Grocery Store</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; margin: 0; background-color: #f3f4f6; scroll-behavior: smooth; }
+        header { background: linear-gradient(to right, #11998e, #38ef7d); color: white; padding: 20px; position: sticky; top: 0; z-index: 1000; }
+        header h1 { margin: 0; text-align: center; }
+        nav ul { list-style: none; display: flex; gap: 20px; justify-content: center; padding: 10px 0 0 0; margin: 0; align-items: center; }
+        nav a { color: white; text-decoration: none; font-size: 1.1rem; cursor: pointer; }
+        nav a:hover { text-decoration: underline; }
+        section { padding: 40px 20px; }
+        .container { max-width: 1200px; margin: auto; }
+
+        .auth-btn { background: white; color: #11998e; padding: 5px 15px; border-radius: 20px; font-weight: bold; border: none; cursor: pointer; }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; margin: 10% auto; padding: 30px; width: 300px; border-radius: 10px; text-align: center; position: relative; }
+        .close { position: absolute; right: 15px; top: 10px; cursor: pointer; font-size: 20px; }
+
+        .banner { background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("https://images.unsplash.com/photo-1542838132-92c53300491e") center/cover; padding: 80px 20px; color: white; text-align: center; border-radius: 10px; }
+        .categories { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; justify-content: center; }
+        .category { background: white; padding: 15px 25px; border-radius: 30px; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-weight: bold; }
+        .category:hover { background: #11998e; color: white; transform: translateY(-3px); }
+
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; }
+        .product { background: white; padding: 20px; border-radius: 10px; text-align: center; transition: 0.3s; }
+        .product img { width: 100%; max-width: 150px; height: 150px; object-fit: cover; margin-bottom: 10px; }
+        .product button { background: #11998e; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; }
+
+        #cart { background: white; padding: 20px; border-radius: 10px; border: 1px solid #ddd; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .remove-btn { background: #ff4d4d; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
+
+        form input, form textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        footer { text-align: center; padding: 20px; background: #11998e; color: white; margin-top: 40px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Online Grocery Store</h1>
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#shop">Shop</a></li>
+            <li><a href="#cart-section">My Cart</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><button id="auth-nav-btn" class="auth-btn" onclick="handleAuthAction()">Login</button></li>
+        </ul>
+    </nav>
+</header>
+
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="toggleModal()">&times;</span>
+        <h2>Login</h2>
+        <form onsubmit="event.preventDefault(); login();">
+            <input type="text" id="username" placeholder="Username (any)" required>
+            <input type="password" id="password" placeholder="Password (any)" required>
+            <button type="submit" style="background:#11998e;color:white;width:100%;padding:10px;border:none;border-radius:5px;">Sign In</button>
+        </form>
+    </div>
+</div>
+
+<section id="home" class="container">
+    <div class="banner">
+        <h2 id="welcome-msg">Fresh Groceries Delivered to Your Door</h2>
+        <p>Organic • Fresh • Affordable</p>
+    </div>
+
+    <div class="categories">
+        <div class="category" onclick="filterProducts('all')">All Products</div>
+        <div class="category" onclick="filterProducts('produce')">🥦 Fresh Produce</div>
+        <div class="category" onclick="filterProducts('essentials')">🥛 Daily Essentials</div>
+        <div class="category" onclick="filterProducts('oils')">🛢 Cooking Oils</div>
+    </div>
+</section>
+
+<section id="shop" class="container">
+    <h2 id="shop-title">All Products</h2>
+    <div class="products-grid">
+        <div class="product essentials">
+            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20240308174326/d12.jpg">
+            <h3>Salt</h3>
+            <p>₹20.00</p>
+            <button onclick="addToCart('Salt',20)">Add to Cart</button>
+        </div>
+
+        <div class="product produce">
+            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20240308174500/f12.jpg">
+            <h3>Apple</h3>
+            <p>₹100.00</p>
+            <button onclick="addToCart('Apple',100)">Add to Cart</button>
+        </div>
+
+        <div class="product produce">
+            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20240308174616/o12.jpg">
+            <h3>Orange</h3>
+            <p>₹80.00</p>
+            <button onclick="addToCart('Orange',80)">Add to Cart</button>
+        </div>
+
+        <div class="product oils">
+            <img src="https://media.geeksforgeeks.org/wp-content/uploads/20240308181947/o123.jpg">
+            <h3>Oil</h3>
+            <p>₹180.00</p>
+            <button onclick="addToCart('Oil',180)">Add to Cart</button>
+        </div>
+    </div>
+</section>
+
+<section id="cart-section" class="container">
+    <h2>My Cart</h2>
+    <div id="cart">
+        <ul id="cart-items"><p>Your cart is empty.</p></ul>
+        <h3 id="cart-total">Total: ₹0.00</h3>
+        <button onclick="checkout()" style="background:#38ef7d;width:100%;padding:15px;border:none;border-radius:5px;">Checkout Now</button>
+    </div>
+</section>
+
+<section id="contact" class="container">
+    <h2>Contact Us</h2>
+    <form onsubmit="event.preventDefault(); alert('Message Sent!');">
+        <input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <textarea rows="4" placeholder="Your Message" required></textarea>
+        <button type="submit" style="background:#11998e;color:white;padding:10px 25px;border:none;border-radius:5px;">Send Message</button>
+    </form>
+</section>
+
+<footer>© 2026 Online Grocery Store</footer>
+
+<script>
+let Items = [];
+let isLoggedIn = false;
+
+function toggleModal() {
+    const modal = document.getElementById('loginModal');
+    modal.style.display = modal.style.display === "block" ? "none" : "block";
+}
+
+function handleAuthAction() {
+    isLoggedIn ? logout() : toggleModal();
+}
+
+function login() {
+    const user = document.getElementById('username').value;
+    if (user) {
+        isLoggedIn = true;
+        document.getElementById('auth-nav-btn').innerText = "Logout";
+        document.getElementById('welcome-msg').innerText = "Welcome back, " + user + "!";
+        toggleModal();
+    }
+}
+
+function logout() {
+    isLoggedIn = false;
+    document.getElementById('auth-nav-btn').innerText = "Login";
+    document.getElementById('welcome-msg').innerText = "Fresh Groceries Delivered to Your Door";
+}
+
+function filterProducts(category) {
+    const products = document.getElementsByClassName('product');
+    document.getElementById('shop').scrollIntoView();
+    for (let p of products) {
+        p.style.display = category === 'all' || p.classList.contains(category) ? "block" : "none";
+    }
+}
+
+function addToCart(name, price) {
+    const item = Items.find(i => i.name === name);
+    item ? item.qty++ : Items.push({ name, price, qty: 1 });
+    updateCart();
+}
+
+function updateCart() {
+    const list = document.getElementById("cart-items");
+    const totalText = document.getElementById("cart-total");
+    list.innerHTML = "";
+    let total = 0;
+
+    Items.forEach((item, i) => {
+        total += item.price * item.qty;
+        list.innerHTML += `<li class="cart-item">
+            <span>${item.name} (x${item.qty})</span>
+            <span>₹${(item.price*item.qty).toFixed(2)}
+            <button class="remove-btn" onclick="removeItem(${i})">Remove</button></span>
+        </li>`;
+    });
+
+    totalText.innerText = "Total: ₹" + total.toFixed(2);
+}
+
+function removeItem(i) {
+    Items.splice(i,1);
+    updateCart();
+}
+
+function checkout() {
+    if (!isLoggedIn) return alert("Please login to checkout!");
+    let total = Items.reduce((s,i)=>s+i.price*i.qty,0);
+    alert("Order Successful!\nTotal Paid: ₹" + total.toFixed(2));
+    Items=[];
+    updateCart();
+}
+</script>
+
+</body>
+</html>
